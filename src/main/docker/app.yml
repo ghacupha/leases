@@ -1,0 +1,22 @@
+version: '2'
+services:
+  eloco-app:
+    image: eloco
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,swagger
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://eloco-postgresql:5432/eloco
+      - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
+      - SPRING_DATA_JEST_URI=http://eloco-elasticsearch:9200
+      - SPRING_ELASTICSEARCH_REST_URIS=http://eloco-elasticsearch:9200
+    ports:
+      - 8080:8080
+  eloco-postgresql:
+    extends:
+      file: postgresql.yml
+      service: eloco-postgresql
+  eloco-elasticsearch:
+    extends:
+      file: elasticsearch.yml
+      service: eloco-elasticsearch
