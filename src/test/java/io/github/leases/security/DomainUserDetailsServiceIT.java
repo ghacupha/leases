@@ -1,25 +1,6 @@
 package io.github.leases.security;
 
-/*-
- * Leases - Leases management application
- * Copyright © 2020 Edwin Njeru (mailnjeru@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
 import io.github.leases.LeasesApp;
-import io.github.leases.config.Constants;
 import io.github.leases.domain.User;
 import io.github.leases.repository.UserRepository;
 
@@ -28,8 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Locale;
 
@@ -40,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * Integrations tests for {@link DomainUserDetailsService}.
  */
 @SpringBootTest(classes = LeasesApp.class)
+@Transactional
 public class DomainUserDetailsServiceIT {
 
     private static final String USER_ONE_LOGIN = "test-user-one";
@@ -53,13 +36,10 @@ public class DomainUserDetailsServiceIT {
     private UserRepository userRepository;
 
     @Autowired
-    private ReactiveUserDetailsService domainUserDetailsService;
+    private UserDetailsService domainUserDetailsService;
 
     @BeforeEach
     public void init() {
-        userRepository.deleteAllUserAuthorities().block();
-        userRepository.deleteAll().block();
-
         User userOne = new User();
         userOne.setLogin(USER_ONE_LOGIN);
         userOne.setPassword(RandomStringUtils.random(60));
@@ -68,8 +48,7 @@ public class DomainUserDetailsServiceIT {
         userOne.setFirstName("userOne");
         userOne.setLastName("doe");
         userOne.setLangKey("en");
-        userOne.setCreatedBy(Constants.SYSTEM_ACCOUNT);
-        userRepository.save(userOne).block();
+        userRepository.save(userOne);
 
         User userTwo = new User();
         userTwo.setLogin(USER_TWO_LOGIN);
@@ -79,8 +58,7 @@ public class DomainUserDetailsServiceIT {
         userTwo.setFirstName("userTwo");
         userTwo.setLastName("doe");
         userTwo.setLangKey("en");
-        userTwo.setCreatedBy(Constants.SYSTEM_ACCOUNT);
-        userRepository.save(userTwo).block();
+        userRepository.save(userTwo);
 
         User userThree = new User();
         userThree.setLogin(USER_THREE_LOGIN);
@@ -90,41 +68,40 @@ public class DomainUserDetailsServiceIT {
         userThree.setFirstName("userThree");
         userThree.setLastName("doe");
         userThree.setLangKey("en");
-        userThree.setCreatedBy(Constants.SYSTEM_ACCOUNT);
-        userRepository.save(userThree).block();
+        userRepository.save(userThree);
     }
 
     @Test
     public void assertThatUserCanBeFoundByLogin() {
-        UserDetails userDetails = domainUserDetailsService.findByUsername(USER_ONE_LOGIN).block();
+        UserDetails userDetails = domainUserDetailsService.loadUserByUsername(USER_ONE_LOGIN);
         assertThat(userDetails).isNotNull();
         assertThat(userDetails.getUsername()).isEqualTo(USER_ONE_LOGIN);
     }
 
     @Test
     public void assertThatUserCanBeFoundByLoginIgnoreCase() {
-        UserDetails userDetails = domainUserDetailsService.findByUsername(USER_ONE_LOGIN.toUpperCase(Locale.ENGLISH)).block();
+        UserDetails userDetails = domainUserDetailsService.loadUserByUsername(USER_ONE_LOGIN.toUpperCase(Locale.ENGLISH));
         assertThat(userDetails).isNotNull();
         assertThat(userDetails.getUsername()).isEqualTo(USER_ONE_LOGIN);
     }
 
     @Test
     public void assertThatUserCanBeFoundByEmail() {
-        UserDetails userDetails = domainUserDetailsService.findByUsername(USER_TWO_EMAIL).block();
+        UserDetails userDetails = domainUserDetailsService.loadUserByUsername(USER_TWO_EMAIL);
         assertThat(userDetails).isNotNull();
         assertThat(userDetails.getUsername()).isEqualTo(USER_TWO_LOGIN);
     }
 
     @Test
     public void assertThatUserCanBeFoundByEmailIgnoreCase() {
-        UserDetails userDetails = domainUserDetailsService.findByUsername(USER_TWO_EMAIL.toUpperCase(Locale.ENGLISH)).block();
+        UserDetails userDetails = domainUserDetailsService.loadUserByUsername(USER_TWO_EMAIL.toUpperCase(Locale.ENGLISH));
         assertThat(userDetails).isNotNull();
         assertThat(userDetails.getUsername()).isEqualTo(USER_TWO_LOGIN);
     }
 
     @Test
     public void assertThatEmailIsPrioritizedOverLogin() {
-        UserDetails userDetails = domainUserDetailsService.findByUsername(USER_ONE_EMAIL).block();
+        UserDetails userDetails = domainUserDetailsService.loadUserByUsername(USER_ONE_EMAIL);
         assertThat(userDetails).isNotNull();
         assertThat(userDetails.getUsername()).isEqualTo(USER_ONE_LOGIN);
     }
@@ -132,7 +109,7 @@ public class DomainUserDetailsServiceIT {
     @Test
     public void assertThatUserNotActivatedExceptionIsThrownForNotActivatedUsers() {
         assertThatExceptionOfType(UserNotActivatedException.class).isThrownBy(
-            () -> domainUserDetailsService.findByUsername(USER_THREE_LOGIN).block());
+            () -> domainUserDetailsService.loadUserByUsername(USER_THREE_LOGIN));
     }
 
 }

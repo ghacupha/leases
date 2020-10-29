@@ -18,13 +18,20 @@ npm install
 
 We use npm scripts and [Webpack][] as our build system.
 
+If you are using hazelcast as a cache, you will have to launch a cache server.
+To start your cache server, run:
+
+```
+docker-compose -f src/main/docker/hazelcast-management-center.yml up -d
+```
+
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
 
 ```
 
-./mvnw
 
+./gradlew -x webpack
 
 npm start
 ```
@@ -110,8 +117,8 @@ To build the final jar and optimize the leases application for production, run:
 
 ```
 
-./mvnw -Pprod clean verify
 
+./gradlew -Pprod clean bootJar
 
 ```
 
@@ -120,8 +127,8 @@ To ensure everything worked, run:
 
 ```
 
-java -jar target/*.jar
 
+java -jar build/libs/*.jar
 
 ```
 
@@ -135,8 +142,8 @@ To package your application as a war in order to deploy it to an application ser
 
 ```
 
-./mvnw -Pprod,war clean verify
 
+./gradlew -Pprod -Pwar clean bootWar
 
 ```
 
@@ -145,7 +152,7 @@ To package your application as a war in order to deploy it to an application ser
 To launch your application's tests, run:
 
 ```
-./mvnw verify
+./gradlew test integrationTest jacocoTestReport
 ```
 
 ### Client tests
@@ -166,18 +173,12 @@ Sonar is used to analyse code quality. You can start a local Sonar server (acces
 docker-compose -f src/main/docker/sonar.yml up -d
 ```
 
-You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the maven plugin.
+You can run a Sonar analysis with using the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) or by using the gradle plugin.
 
 Then, run a Sonar analysis:
 
 ```
-./mvnw -Pprod clean verify sonar:sonar
-```
-
-If you need to re-run the Sonar phase, please be sure to specify at least the `initialize` phase since Sonar properties are loaded from the sonar-project.properties file.
-
-```
-./mvnw initialize sonar:sonar
+./gradlew -Pprod clean check jacocoTestReport sonarqube
 ```
 
 For more information, refer to the [Code quality page][].
@@ -202,7 +203,7 @@ You can also fully dockerize your application and all the services that it depen
 To achieve this, first build a docker image of your app by running:
 
 ```
-./mvnw -Pprod verify jib:dockerBuild
+./gradlew bootJar -Pprod jibDockerBuild
 ```
 
 Then run:

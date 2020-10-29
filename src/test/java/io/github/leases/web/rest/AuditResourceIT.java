@@ -1,23 +1,5 @@
 package io.github.leases.web.rest;
 
-/*-
- * Leases - Leases management application
- * Copyright © 2020 Edwin Njeru (mailnjeru@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
 import io.github.leases.LeasesApp;
 import io.github.leases.domain.PersistentAuditEvent;
 import io.github.leases.repository.PersistenceAuditEventRepository;
@@ -26,23 +8,30 @@ import io.github.leases.security.AuthoritiesConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Integration tests for the {@link AuditResource} REST controller.
  */
-@AutoConfigureWebTestClient
+@AutoConfigureMockMvc
 @WithMockUser(authorities = AuthoritiesConstants.ADMIN)
 @SpringBootTest(classes = LeasesApp.class)
+@Transactional
 public class AuditResourceIT {
 
     private static final String SAMPLE_PRINCIPAL = "SAMPLE_PRINCIPAL";
@@ -56,11 +45,11 @@ public class AuditResourceIT {
     private PersistentAuditEvent auditEvent;
 
     @Autowired
-    private WebTestClient webTestClient;
+    private MockMvc restAuditMockMvc;
 
     @BeforeEach
     public void initTest() {
-        auditEventRepository.deleteAll().block();
+        auditEventRepository.deleteAll();
         auditEvent = new PersistentAuditEvent();
         auditEvent.setAuditEventType(SAMPLE_TYPE);
         auditEvent.setPrincipal(SAMPLE_PRINCIPAL);
@@ -68,71 +57,66 @@ public class AuditResourceIT {
     }
 
     @Test
-    public void getAllAudits() {
+    public void getAllAudits() throws Exception {
         // Initialize the database
-        auditEventRepository.save(auditEvent).block();
+        auditEventRepository.save(auditEvent);
 
         // Get all the audits
-        webTestClient.get().uri("/management/audits")
-            .exchange()
-            .expectStatus().isOk()
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBody().jsonPath("$.[*].principal").value(hasItem(SAMPLE_PRINCIPAL));
+        restAuditMockMvc.perform(get("/management/audits"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].principal").value(hasItem(SAMPLE_PRINCIPAL)));
     }
 
     @Test
-    public void getAudit() {
+    public void getAudit() throws Exception {
         // Initialize the database
-        auditEventRepository.save(auditEvent).block();
+        auditEventRepository.save(auditEvent);
 
         // Get the audit
-        webTestClient.get().uri("/management/audits/{id}", auditEvent.getId())
-            .exchange()
-            .expectStatus().isOk()
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBody().jsonPath("$.principal").isEqualTo(SAMPLE_PRINCIPAL);
+        restAuditMockMvc.perform(get("/management/audits/{id}", auditEvent.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.principal").value(SAMPLE_PRINCIPAL));
     }
 
     @Test
-    public void getAuditsByDate() {
+    public void getAuditsByDate() throws Exception {
         // Initialize the database
-        auditEventRepository.save(auditEvent).block();
+        auditEventRepository.save(auditEvent);
 
         // Generate dates for selecting audits by date, making sure the period will contain the audit
         String fromDate = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
         String toDate = SAMPLE_TIMESTAMP.plusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
 
         // Get the audit
-        webTestClient.get().uri("/management/audits?fromDate="+fromDate+"&toDate="+toDate)
-            .exchange()
-            .expectStatus().isOk()
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBody().jsonPath("$.[*].principal").value(hasItem(SAMPLE_PRINCIPAL));
+        restAuditMockMvc.perform(get("/management/audits?fromDate="+fromDate+"&toDate="+toDate))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].principal").value(hasItem(SAMPLE_PRINCIPAL)));
     }
 
     @Test
-    public void getNonExistingAuditsByDate() {
+    public void getNonExistingAuditsByDate() throws Exception {
         // Initialize the database
-        auditEventRepository.save(auditEvent).block();
+        auditEventRepository.save(auditEvent);
 
         // Generate dates for selecting audits by date, making sure the period will not contain the sample audit
         String fromDate  = SAMPLE_TIMESTAMP.minusSeconds(2*SECONDS_PER_DAY).toString().substring(0, 10);
         String toDate = SAMPLE_TIMESTAMP.minusSeconds(SECONDS_PER_DAY).toString().substring(0, 10);
 
         // Query audits but expect no results
-        webTestClient.get().uri("/management/audits?fromDate="+fromDate+"&toDate="+toDate)
-            .exchange()
-            .expectStatus().isOk()
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectHeader().valueEquals("X-Total-Count", "0");
+        restAuditMockMvc.perform(get("/management/audits?fromDate=" + fromDate + "&toDate=" + toDate))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(header().string("X-Total-Count", "0"));
     }
 
     @Test
-    public void getNonExistingAudit() {
+    public void getNonExistingAudit() throws Exception {
         // Get the audit
-        webTestClient.get().uri("/management/audits/{id}", Long.MAX_VALUE)
-            .exchange()
-            .expectStatus().isNotFound();
+        restAuditMockMvc.perform(get("/management/audits/{id}", Long.MAX_VALUE))
+            .andExpect(status().isNotFound());
     }
 
     @Test

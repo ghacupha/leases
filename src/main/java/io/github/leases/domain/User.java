@@ -1,33 +1,13 @@
 package io.github.leases.domain;
 
-/*-
- * Leases - Leases management application
- * Copyright © 2020 Edwin Njeru (mailnjeru@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
 import io.github.leases.config.Constants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -41,64 +21,75 @@ import java.util.Set;
 /**
  * A user.
  */
-@Table("jhi_user")
+@Entity
+@Table(name = "jhi_user")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "user")
 public class User extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     @NotNull
     @Pattern(regexp = Constants.LOGIN_REGEX)
     @Size(min = 1, max = 50)
+    @Column(length = 50, unique = true, nullable = false)
     private String login;
 
     @JsonIgnore
     @NotNull
     @Size(min = 60, max = 60)
-    @Column("password_hash")
+    @Column(name = "password_hash", length = 60, nullable = false)
     private String password;
 
     @Size(max = 50)
-    @Column("first_name")
+    @Column(name = "first_name", length = 50)
     private String firstName;
 
     @Size(max = 50)
-    @Column("last_name")
+    @Column(name = "last_name", length = 50)
     private String lastName;
 
     @Email
     @Size(min = 5, max = 254)
+    @Column(length = 254, unique = true)
     private String email;
 
     @NotNull
+    @Column(nullable = false)
     private boolean activated = false;
 
     @Size(min = 2, max = 10)
-    @Column("lang_key")
+    @Column(name = "lang_key", length = 10)
     private String langKey;
 
     @Size(max = 256)
-    @Column("image_url")
+    @Column(name = "image_url", length = 256)
     private String imageUrl;
 
     @Size(max = 20)
-    @Column("activation_key")
+    @Column(name = "activation_key", length = 20)
     @JsonIgnore
     private String activationKey;
 
     @Size(max = 20)
-    @Column("reset_key")
+    @Column(name = "reset_key", length = 20)
     @JsonIgnore
     private String resetKey;
 
-    @Column("reset_date")
+    @Column(name = "reset_date")
     private Instant resetDate = null;
 
     @JsonIgnore
-    @Transient
+    @ManyToMany
+    @JoinTable(
+        name = "jhi_user_authority",
+        joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+        inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
+    @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
 

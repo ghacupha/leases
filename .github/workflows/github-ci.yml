@@ -1,6 +1,12 @@
 name: Application CI
 on: [push, pull_request]
 jobs:
+    validation:
+        name: "Gradle Wrapper Validation"
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: gradle/wrapper-validation-action@v1
     pipeline:
         name: leases pipeline
         runs-on: ubuntu-latest
@@ -24,12 +30,12 @@ jobs:
               run: npm install
             - name: Run backend test
               run: |
-                  chmod +x mvnw
-                  ./mvnw -ntp clean verify -P-webpack
+                  chmod +x gradlew
+                  ./gradlew clean test integrationTest -x webpack
             - name: Run frontend test
               run: npm run test
             - name: Package application
-              run: ./mvnw -ntp package -Pprod -DskipTests
+              run: ./gradlew bootJar -Pprod -x test -x integrationTest
             - name: Build and publish docker image
               if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
               run: |

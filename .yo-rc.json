@@ -10,7 +10,7 @@
     "packageFolder": "io/github/leases",
     "serverPort": "22000",
     "authenticationType": "jwt",
-    "cacheProvider": "no",
+    "cacheProvider": "hazelcast",
     "websocket": false,
     "databaseType": "sql",
     "devDatabaseType": "postgresql",
@@ -18,7 +18,7 @@
     "searchEngine": "elasticsearch",
     "messageBroker": false,
     "serviceDiscoveryType": false,
-    "buildTool": "maven",
+    "buildTool": "gradle",
     "enableSwaggerCodegen": false,
     "jwtSecretKey": "OWZhM2M3MWU5NmZlMWJkNGMyMzBkYjM4YWM3NjlmZWU0YmQzMDNlNjg0NWRlMDY2ODY3ODQwOGRmMjZkYmZlZjJjMjg5MjFkZGYzN2Q2ZTIwODg1MWU2NzFhNGM1ZDJlY2U1ZjcwMjg5OTk2ZGQ5NWFlYzE4ZGNkN2VjNTExZGQ=",
     "embeddableLaunchScript": false,
@@ -35,6 +35,6 @@
     "otherModules": [],
     "enableTranslation": false,
     "blueprints": [],
-    "reactive": true
+    "reactive": false
   }
 }

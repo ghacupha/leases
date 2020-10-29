@@ -1,42 +1,22 @@
 package io.github.leases.web.rest;
 
-/*-
- * Leases - Leases management application
- * Copyright © 2020 Edwin Njeru (mailnjeru@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
 import io.github.leases.service.AuditEventService;
 
 import io.github.jhipster.web.util.PaginationUtil;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.springframework.boot.actuate.audit.AuditEvent;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * REST controller for getting the {@link AuditEvent}s.
@@ -54,16 +34,14 @@ public class AuditResource {
     /**
      * {@code GET /audits} : get a page of {@link AuditEvent}s.
      *
-     * @param request a {@link ServerHttpRequest} request.
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of {@link AuditEvent}s in body.
      */
     @GetMapping
-    public Mono<ResponseEntity<Flux<AuditEvent>>> getAll(ServerHttpRequest request, Pageable pageable) {
-        return auditEventService.count()
-            .map(total -> new PageImpl<>(new ArrayList<>(), pageable, total))
-            .map(page -> PaginationUtil.generatePaginationHttpHeaders(UriComponentsBuilder.fromHttpRequest(request), page))
-            .map(headers -> ResponseEntity.ok().headers(headers).body(auditEventService.findAll(pageable)));
+    public ResponseEntity<List<AuditEvent>> getAll(Pageable pageable) {
+        Page<AuditEvent> page = auditEventService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
@@ -71,25 +49,21 @@ public class AuditResource {
      *
      * @param fromDate the start of the time period of {@link AuditEvent} to get.
      * @param toDate the end of the time period of {@link AuditEvent} to get.
-     * @param request a {@link ServerHttpRequest} request.
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of {@link AuditEvent} in body.
      */
     @GetMapping(params = {"fromDate", "toDate"})
-    public Mono<ResponseEntity<Flux<AuditEvent>>> getByDates(
+    public ResponseEntity<List<AuditEvent>> getByDates(
         @RequestParam(value = "fromDate") LocalDate fromDate,
         @RequestParam(value = "toDate") LocalDate toDate,
-        ServerHttpRequest request,
         Pageable pageable) {
 
         Instant from = fromDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
         Instant to = toDate.atStartOfDay(ZoneId.systemDefault()).plusDays(1).toInstant();
 
-        Flux<AuditEvent> events = auditEventService.findByDates(from, to, pageable);
-        return auditEventService.countByDates(from, to)
-            .map(total -> new PageImpl<>(new ArrayList<>(), pageable, total))
-            .map(page -> PaginationUtil.generatePaginationHttpHeaders(UriComponentsBuilder.fromHttpRequest(request), page))
-            .map(headers -> ResponseEntity.ok().headers(headers).body(events));
+        Page<AuditEvent> page = auditEventService.findByDates(from, to, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
@@ -99,8 +73,7 @@ public class AuditResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the {@link AuditEvent} in body, or status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id:.+}")
-    public Mono<AuditEvent> get(@PathVariable Long id) {
-        return auditEventService.find(id)
-            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
+    public ResponseEntity<AuditEvent> get(@PathVariable Long id) {
+        return ResponseUtil.wrapOrNotFound(auditEventService.find(id));
     }
 }

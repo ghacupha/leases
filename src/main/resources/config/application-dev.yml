@@ -40,16 +40,27 @@ spring:
   jackson:
     serialization:
       indent-output: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    #url: jdbc:postgresql://localhost:5432/leases
+    url: ${LOCAL_PG_SERVER}/leases
+    username: ${PG_DATABASE_DEV_USER}
+    password: ${PG_DATABASE_DEV_PASSWORD}
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+  jpa:
+    database-platform: io.github.jhipster.domain.util.FixedPostgreSQL10Dialect
+    show-sql: true
   data:
     elasticsearch:
       properties:
         path:
-          home: target/elasticsearch
+          home: build/elasticsearch
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
-    #contexts: dev, faker
+    # contexts: dev, faker
     contexts: dev
-    url: ${LOCAL_PG_SERVER}/leases
   mail:
     host: localhost
     port: 25
@@ -57,11 +68,6 @@ spring:
     password:
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
-  r2dbc:
-    #url: r2dbc:postgresql://localhost:5432/leases
-    url: ${LOCAL_R2DBC_URL}/leases
-    username: ${PG_DATABASE_DEV_USER}
-    password: ${PG_DATABASE_DEV_PASSWORD}
   thymeleaf:
     cache: false
 
@@ -75,6 +81,14 @@ server:
 # ===================================================================
 
 jhipster:
+  cache: # Cache configuration
+    hazelcast: # Hazelcast distributed cache
+      time-to-live-seconds: 3600
+      backup-count: 1
+      management-center: # Full reference is available at: http://docs.hazelcast.org/docs/management-center/3.9/manual/html/Deploying_and_Starting.html
+        enabled: false
+        update-interval: 3
+        url: http://localhost:8180/hazelcast-mancenter
   # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
   cors:
     allowed-origins: '*'
