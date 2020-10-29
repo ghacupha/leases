@@ -47,8 +47,9 @@ spring:
           home: target/elasticsearch
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
-    contexts: dev, faker
-    url: jdbc:postgresql://localhost:5432/leases
+    #contexts: dev, faker
+    contexts: dev
+    url: ${LOCAL_PG_SERVER}/leases
   mail:
     host: localhost
     port: 25
@@ -57,9 +58,10 @@ spring:
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/leases
-    username: leases
-    password:
+    #url: r2dbc:postgresql://localhost:5432/leases
+    url: ${LOCAL_R2DBC_URL}/leases
+    username: ${PG_DATABASE_DEV_USER}
+    password: ${PG_DATABASE_DEV_PASSWORD}
   thymeleaf:
     cache: false
 

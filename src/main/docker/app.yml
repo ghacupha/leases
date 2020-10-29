@@ -1,21 +1,44 @@
+#
+# Leases - Leases management application
+# Copyright © 2020 Edwin Njeru (mailnjeru@gmail.com)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
 version: '2'
 services:
   leases-app:
-    image: leases
+    image: ghacupha/leases:0.0.1-SNAPSHOT
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,swagger
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://leases-postgresql:5432/leases
+      #- SPRING_DATASOURCE_URL=jdbc:postgresql://leases-postgresql:5432/leases
+      - SPRING_DATASOURCE_URL=${LOCAL_PG_SERVER}/leases
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
       - SPRING_DATA_JEST_URI=http://leases-elasticsearch:9200
       - SPRING_ELASTICSEARCH_REST_URIS=http://leases-elasticsearch:9200
+      - PG_DATABASE_DEV_USER=${PG_DATABASE_DEV_USER}
+      - PG_DATABASE_DEV_PASSWORD=${PG_DATABASE_DEV_PASSWORD}
+      - LOCAL_PG_SERVER=${LOCAL_PG_SERVER}
+      - LOCAL_R2DBC_URL=${LOCAL_R2DBC_URL}
     ports:
       - 22000:22000
-  leases-postgresql:
-    extends:
-      file: postgresql.yml
-      service: leases-postgresql
+  #  leases-postgresql:
+  #    extends:
+  #      file: postgresql.yml
+  #      service: leases-postgresql
   leases-elasticsearch:
     extends:
       file: elasticsearch.yml
