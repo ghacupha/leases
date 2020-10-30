@@ -1,0 +1,32 @@
+<form  name="editForm" role="form" novalidate (ngSubmit)="submit()" [formGroup]="editForm">
+    <h2 id="reporting-period-heading">Report Query</h2>
+
+    <div>
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group">
+            <label class="form-control-label" for="field_reportingPeriod">Period From</label>
+            <div class="input-group">
+                <input id="field_reportingPeriod" type="text" class="form-control" name="reportingPeriod" ngbDatepicker #reportingPeriodDp="ngbDatepicker" formControlName="reportingPeriod"/>
+                <span class="input-group-append">
+                                <button type="button" class="btn btn-secondary" (click)="reportingPeriodDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                            </span>
+            </div>
+        </div>
+        <div *ngIf="editForm.get('reportingPeriod')!.invalid && (editForm.get('reportingPeriod')!.dirty || editForm.get('reportingPeriod')!.touched)">
+            <small class="form-text text-danger"
+                   *ngIf="editForm.get('reportingPeriod')?.errors?.required">
+                This field is required.
+            </small>
+        </div>
+    </div>
+
+    <div>
+        <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+            <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button type="submit" id="save-entity" [disabled]="editForm.invalid || isBusy" class="btn btn-primary">
+            <fa-icon icon="eye"></fa-icon>&nbsp;<span>Submit</span>
+        </button>
+    </div>
+</form>
