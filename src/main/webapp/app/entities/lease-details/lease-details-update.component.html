@@ -1,0 +1,96 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-lease-details-heading">Create or edit a Lease Details</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_leaseContractNumber">Lease Contract Number</label>
+                    <input type="text" class="form-control" name="leaseContractNumber" id="field_leaseContractNumber"
+                           formControlName="leaseContractNumber"/>
+                    <div *ngIf="editForm.get('leaseContractNumber')!.invalid && (editForm.get('leaseContractNumber')!.dirty || editForm.get('leaseContractNumber')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('leaseContractNumber')?.errors?.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_incrementalBorrowingRate">Incremental Borrowing Rate</label>
+                    <input type="number" class="form-control" name="incrementalBorrowingRate" id="field_incrementalBorrowingRate"
+                           formControlName="incrementalBorrowingRate"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_commencementDate">Commencement Date</label>
+                    <div class="input-group">
+                        <input id="field_commencementDate" type="text" class="form-control" name="commencementDate" ngbDatepicker #commencementDateDp="ngbDatepicker" formControlName="commencementDate"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="commencementDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_leasePrepayments">Lease Prepayments</label>
+                    <input type="number" class="form-control" name="leasePrepayments" id="field_leasePrepayments"
+                           formControlName="leasePrepayments"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_initialDirectCosts">Initial Direct Costs</label>
+                    <input type="number" class="form-control" name="initialDirectCosts" id="field_initialDirectCosts"
+                           formControlName="initialDirectCosts"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_demolitionCosts">Demolition Costs</label>
+                    <input type="number" class="form-control" name="demolitionCosts" id="field_demolitionCosts"
+                           formControlName="demolitionCosts"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_assetAccountNumber">Asset Account Number</label>
+                    <input type="text" class="form-control" name="assetAccountNumber" id="field_assetAccountNumber"
+                           formControlName="assetAccountNumber"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_liabilityAccountNumber">Liability Account Number</label>
+                    <input type="text" class="form-control" name="liabilityAccountNumber" id="field_liabilityAccountNumber"
+                           formControlName="liabilityAccountNumber"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_depreciationAccountNumber">Depreciation Account Number</label>
+                    <input type="text" class="form-control" name="depreciationAccountNumber" id="field_depreciationAccountNumber"
+                           formControlName="depreciationAccountNumber"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_interestAccountNumber">Interest Account Number</label>
+                    <input type="text" class="form-control" name="interestAccountNumber" id="field_interestAccountNumber"
+                           formControlName="interestAccountNumber"/>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

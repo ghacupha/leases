@@ -1,0 +1,70 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-contractual-lease-rental-heading">Create or edit a Contractual Lease Rental</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_leaseContractNumber">Lease Contract Number</label>
+                    <input type="text" class="form-control" name="leaseContractNumber" id="field_leaseContractNumber"
+                           formControlName="leaseContractNumber"/>
+                    <div *ngIf="editForm.get('leaseContractNumber')!.invalid && (editForm.get('leaseContractNumber')!.dirty || editForm.get('leaseContractNumber')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('leaseContractNumber')?.errors?.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_rentalSequenceNumber">Rental Sequence Number</label>
+                    <input type="number" class="form-control" name="rentalSequenceNumber" id="field_rentalSequenceNumber"
+                           formControlName="rentalSequenceNumber"/>
+                    <div *ngIf="editForm.get('rentalSequenceNumber')!.invalid && (editForm.get('rentalSequenceNumber')!.dirty || editForm.get('rentalSequenceNumber')!.touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('rentalSequenceNumber')?.errors?.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('rentalSequenceNumber')?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_leaseRentalDate">Lease Rental Date</label>
+                    <div class="input-group">
+                        <input id="field_leaseRentalDate" type="text" class="form-control" name="leaseRentalDate" ngbDatepicker #leaseRentalDateDp="ngbDatepicker" formControlName="leaseRentalDate"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="leaseRentalDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_leaseRentalAmount">Lease Rental Amount</label>
+                    <input type="number" class="form-control" name="leaseRentalAmount" id="field_leaseRentalAmount"
+                           formControlName="leaseRentalAmount"/>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

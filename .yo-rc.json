@@ -35,6 +35,7 @@
     "otherModules": [],
     "enableTranslation": false,
     "blueprints": [],
-    "reactive": false
+    "reactive": false,
+    "lastLiquibaseTimestamp": 1604041826000
   }
 }

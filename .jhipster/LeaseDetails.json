@@ -1,0 +1,57 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "leaseContractNumber",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "incrementalBorrowingRate",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "commencementDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "leasePrepayments",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "initialDirectCosts",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "demolitionCosts",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "assetAccountNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "liabilityAccountNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "depreciationAccountNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "interestAccountNumber",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20201030071026",
+  "dto": "mapstruct",
+  "searchEngine": "elasticsearch",
+  "service": "serviceImpl",
+  "entityTableName": "lease_details",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": true,
+  "pagination": "pagination"
+}

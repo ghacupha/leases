@@ -1,0 +1,42 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="contractualLeaseRental">
+            <h2><span>Contractual Lease Rental</span> {{ contractualLeaseRental.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>Lease Contract Number</span></dt>
+                <dd>
+                    <span>{{ contractualLeaseRental.leaseContractNumber }}</span>
+                </dd>
+                <dt><span>Rental Sequence Number</span></dt>
+                <dd>
+                    <span>{{ contractualLeaseRental.rentalSequenceNumber }}</span>
+                </dd>
+                <dt><span>Lease Rental Date</span></dt>
+                <dd>
+                    <span>{{ contractualLeaseRental.leaseRentalDate }}</span>
+                </dd>
+                <dt><span>Lease Rental Amount</span></dt>
+                <dd>
+                    <span>{{ contractualLeaseRental.leaseRentalAmount }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/contractual-lease-rental', contractualLeaseRental.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
