@@ -37,5 +37,13 @@
     "blueprints": [],
     "reactive": false,
     "lastLiquibaseTimestamp": 1604041826000
+  },
+  "generator-jhipster-file-handling": {
+    "promptValues": {
+      "gatewayMicroserviceName": "leases",
+      "generalClientRootFolder": "leases",
+      "fileModelTypes": "CONTRACTUAL_LEASE_RENTAL,LEASE_DETAILS,LEASE_RENTAL"
+    },
+    "lastLiquibaseTimestamp": 1604048780000
   }
 }

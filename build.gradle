@@ -42,8 +42,6 @@ sourceCompatibility=1.8
 targetCompatibility=1.8
 assert System.properties["java.specification.version"] == "1.8" || "11" || "12" || "13" || "14"
 
-// Uncomment to enable license processing
-//apply plugin: "com.github.jk1.dependency-license-report"
 apply from: "gradle/docker.gradle"
 apply from: "gradle/sonar.gradle"
 //jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
@@ -310,6 +308,8 @@ dependencies {
     testImplementation "com.tngtech.archunit:archunit-junit5-api:${archunit_junit5_version}"
     testRuntimeOnly "com.tngtech.archunit:archunit-junit5-engine:${archunit_junit5_version}"
     testImplementation "com.h2database:h2"
+    compile "com.github.ozlerhakan:poiji:1.20.0"
+    compile "org.springframework.boot:spring-boot-starter-batch:1.18.6"
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 

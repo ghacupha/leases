@@ -1,0 +1,65 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="leasesFileUpload">
+            <h2><span>Leases File Upload</span> {{ leasesFileUpload.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>Description</span></dt>
+                <dd>
+                    <span>{{ leasesFileUpload.description }}</span>
+                </dd>
+                <dt><span>File Name</span></dt>
+                <dd>
+                    <span>{{ leasesFileUpload.fileName }}</span>
+                </dd>
+                <dt><span>Period From</span></dt>
+                <dd>
+                    <span>{{ leasesFileUpload.periodFrom }}</span>
+                </dd>
+                <dt><span>Period To</span></dt>
+                <dd>
+                    <span>{{ leasesFileUpload.periodTo }}</span>
+                </dd>
+                <dt><span>Leases File Type Id</span></dt>
+                <dd>
+                    <span>{{ leasesFileUpload.leasesFileTypeId }}</span>
+                </dd>
+                <dt><span>Data File</span></dt>
+                <dd>
+                    <div *ngIf="leasesFileUpload.dataFile">
+                        <a (click)="openFile(leasesFileUpload.dataFileContentType, leasesFileUpload.dataFile)">open</a>
+                        {{ leasesFileUpload.dataFileContentType }}, {{ byteSize(leasesFileUpload.dataFile) }}
+                    </div>
+                </dd>
+                <dt><span>Upload Successful</span></dt>
+                <dd>
+                    <span>{{ leasesFileUpload.uploadSuccessful }}</span>
+                </dd>
+                <dt><span>Upload Processed</span></dt>
+                <dd>
+                    <span>{{ leasesFileUpload.uploadProcessed }}</span>
+                </dd>
+                <dt><span>Upload Token</span></dt>
+                <dd>
+                    <span>{{ leasesFileUpload.uploadToken }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/leases-file-upload', leasesFileUpload.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

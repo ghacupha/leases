@@ -1,0 +1,47 @@
+{
+  "name": "LeasesFileType",
+  "fields": [
+    {
+      "fieldName": "leasesFileTypeName",
+      "fieldType": "String",
+      "fieldValidateRules": [
+        "required",
+        "unique"
+      ]
+    },
+    {
+      "fieldName": "leasesFileMediumType",
+      "fieldType": "LeasesFileMediumTypes",
+      "fieldValues": "EXCEL,EXCEL_XLS,EXCEL_XLSX,EXCEL_XLSB,EXCEL_CSV,EXCEL_XML,PDF,POWERPOINT,DOC,TEXT,JSON,HTML5",
+      "fieldValidateRules": [
+        "required"
+      ]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "fileTemplate",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "leasesfileType",
+      "fieldType": "LeasesFileModelType",
+      "fieldValues": "CURRENCY_LIST,CONTRACTUAL_LEASE_RENTAL,LEASE_DETAILS,LEASE_RENTAL"
+    }
+  ],
+  "relationships": [],
+  "changelogDate": "20201030090732",
+  "entityTableName": "leases_file_type",
+  "dto": "no",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": true,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "leases",
+  "applications": "*"
+}

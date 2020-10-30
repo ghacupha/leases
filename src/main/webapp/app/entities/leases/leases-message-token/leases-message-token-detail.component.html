@@ -1,0 +1,50 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="leasesMessageToken">
+            <h2><span>Leases Message Token</span> {{ leasesMessageToken.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>Description</span></dt>
+                <dd>
+                    <span>{{ leasesMessageToken.description }}</span>
+                </dd>
+                <dt><span>Time Sent</span></dt>
+                <dd>
+                    <span>{{ leasesMessageToken.timeSent }}</span>
+                </dd>
+                <dt><span>Token Value</span></dt>
+                <dd>
+                    <span>{{ leasesMessageToken.tokenValue }}</span>
+                </dd>
+                <dt><span>Received</span></dt>
+                <dd>
+                    <span>{{ leasesMessageToken.received }}</span>
+                </dd>
+                <dt><span>Actioned</span></dt>
+                <dd>
+                    <span>{{ leasesMessageToken.actioned }}</span>
+                </dd>
+                <dt><span>Content Fully Enqueued</span></dt>
+                <dd>
+                    <span>{{ leasesMessageToken.contentFullyEnqueued }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/leases-message-token', leasesMessageToken.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

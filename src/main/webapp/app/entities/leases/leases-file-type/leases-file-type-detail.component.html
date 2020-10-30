@@ -1,0 +1,49 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="leasesFileType">
+            <h2><span>Leases File Type</span> {{ leasesFileType.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span>Leases File Type Name</span></dt>
+                <dd>
+                    <span>{{ leasesFileType.leasesFileTypeName }}</span>
+                </dd>
+                <dt><span>Leases File Medium Type</span></dt>
+                <dd>
+                    <span>{{ leasesFileType.leasesFileMediumType }}</span>
+                </dd>
+                <dt><span>Description</span></dt>
+                <dd>
+                    <span>{{ leasesFileType.description }}</span>
+                </dd>
+                <dt><span>File Template</span></dt>
+                <dd>
+                    <div *ngIf="leasesFileType.fileTemplate">
+                        <a (click)="openFile(leasesFileType.fileTemplateContentType, leasesFileType.fileTemplate)">open</a>
+                        {{ leasesFileType.fileTemplateContentType }}, {{ byteSize(leasesFileType.fileTemplate) }}
+                    </div>
+                </dd>
+                <dt><span>Leasesfile Type</span></dt>
+                <dd>
+                    <span>{{ leasesFileType.leasesfileType }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/leases-file-type', leasesFileType.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

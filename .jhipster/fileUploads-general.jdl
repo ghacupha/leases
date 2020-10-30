@@ -1,0 +1,58 @@
+entity LeasesFileType {
+leasesFileTypeName String required unique,
+leasesFileMediumType LeasesFileMediumTypes required,
+description String,
+fileTemplate AnyBlob,
+leasesfileType LeasesFileModelType
+}
+entity LeasesFileUpload {
+description String required,
+fileName String required unique,
+periodFrom LocalDate,
+periodTo LocalDate,
+leasesFileTypeId Long required,
+dataFile AnyBlob required,
+uploadSuccessful Boolean,
+uploadProcessed Boolean,
+uploadToken String unique
+}
+entity LeasesMessageToken {
+description String,
+timeSent Long required,
+tokenValue String required,
+received Boolean,
+actioned Boolean,
+contentFullyEnqueued Boolean
+}
+entity CurrencyTable {
+currencyCode String unique minlength(3) maxlength(3),
+locality CurrencyLocality required,
+currencyName String,
+country String
+}
+enum CurrencyLocality {
+LOCAL,
+FOREIGN
+}
+enum LeasesFileMediumTypes {
+EXCEL,
+EXCEL_XLS,
+EXCEL_XLSX,
+EXCEL_XLSB,
+EXCEL_CSV,
+EXCEL_XML,
+PDF,
+POWERPOINT,
+DOC,
+TEXT,
+JSON,
+HTML5
+}
+enum LeasesFileModelType { CURRENCY_LIST,CONTRACTUAL_LEASE_RENTAL,LEASE_DETAILS,LEASE_RENTAL }
+dto LeasesFileUpload, LeasesMessageToken, CurrencyTable with mapstruct
+paginate LeasesFileType, LeasesFileUpload, LeasesMessageToken, CurrencyTable with pagination
+service LeasesFileUpload, LeasesMessageToken, CurrencyTable with serviceImpl
+service LeasesFileType with serviceClass
+search CurrencyTable with elasticsearch
+filter LeasesFileType, LeasesFileUpload, LeasesMessageToken, CurrencyTable
+clientRootFolder LeasesFileType, LeasesFileUpload, LeasesMessageToken, CurrencyTable with leases
